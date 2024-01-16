@@ -1,0 +1,17 @@
+{
+  "name": "arkaclone",
+  "version": "1.0.0",
+  "description": "A clone of Arkanoid/Breakout in 3D.",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Javier Martinez",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^5.0.11"
+  },
+  "dependencies": {
+    "three": "^0.160.0"
+  }
+}

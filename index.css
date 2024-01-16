@@ -1,0 +1,4 @@
+/* Rid the body of any default margin. */
+body {
+    margin: 0;
+}
