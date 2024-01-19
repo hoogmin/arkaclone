@@ -1,6 +1,6 @@
 import {
     BoxGeometry,
-    MeshBasicMaterial,
+    MeshStandardMaterial,
     Mesh
 } from "three";
 
@@ -12,19 +12,20 @@ export default class ArkaObject {
 
         // Manipulating these properties will be handled by subclasses.
         this.box = new BoxGeometry(width, height, depth);
-        this.material = new MeshBasicMaterial({ color: color });
+        this.matColor = color;
+        this.material = new MeshStandardMaterial({ color: color });
         this.mesh = new Mesh(this.box, this.material);
     }
 
-    start() {
+    start(state) {
         throw new Error("Method 'start' must be implemented by subclass.");
     }
 
-    update() {
+    update(state) {
         throw new Error("Method 'update' must be implemented by subclass.");
     }
 
-    destroy() {
+    destroy(state) {
         throw new Error("Method 'destroy' must be implemented by subclass.");
     }
 }

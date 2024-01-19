@@ -2,6 +2,10 @@ import ArkaObject from "./arkaobject";
 import {
     Color
 } from "three";
+import {
+    RIGHT_EXTENT_IDX,
+    LEFT_EXTENT_IDX
+} from "./arkacutil"
 
 export default class Player extends ArkaObject {
     constructor(width, height, depth, color, speed) {
@@ -10,38 +14,51 @@ export default class Player extends ArkaObject {
         this.movementSpeed = speed;
     }
 
-    start() {
+    start(state) {
+        console.log("Player initialized."); // TODO: Remove.
         // Player's starting position
         this.mesh.position.x = 0;
         this.mesh.position.y = -3.5;
 
         // Set up the player's dimensions.
-        this.box.scale.x = this.width;
-        this.box.scale.y = this.height;
-        this.box.scale.z = this.depth;
+        // this.box.scale.x = this.width;
+        // this.box.scale.y = this.height;
+        // this.box.scale.z = this.depth;
 
         // Set up material for player.
-        this.material.color.set(this.color); // TODO: Might need to pass as string.
+        this.material.color = new Color(this.matColor);
 
         // Get the keyboard controls going.
         this._initControls();
     }
 
-    update() {
-        // Anything player specific to occur each frame.
+    update(state) {
+        // Clamp the player's position according to the horizontal extents
+        // of the screen. Extents must be adjusted based on the player mesh width.
+        const playerHalfWidth = this.mesh.scale.x;
+        const playerRightmost = state.screenExtents[RIGHT_EXTENT_IDX] - playerHalfWidth;
+        const playerLeftmost = -playerRightmost;
+
+        if ((this.mesh.position.x + playerHalfWidth) > playerRightmost) {
+            console.log(`Player is past right: ${playerRightmost}`); // TODO: Remove.
+            this.mesh.position.x = playerRightmost - playerHalfWidth;
+        }
+
+        if ((this.mesh.position.x - playerHalfWidth) < playerLeftmost) {
+            console.log(`Player is past left: ${playerLeftmost}`); // TODO: Remove.
+            this.mesh.position.x = playerLeftmost + playerHalfWidth;
+        }
     }
 
-    destroy(scene) {
+    destroy(state) {
         // Remove object from scene and free corresponding resources.
-        scene.remove(this.mesh);
+        state.scene.remove(this.mesh);
         this.material.dispose();
         this.box.dispose();
     }
 
     _moveRight() {
-        if (this.mesh.position.x < window.innerWidth - this.mesh.position.x) {
-            this.mesh.position.x += this.movementSpeed;
-        }
+        this.mesh.position.x += this.movementSpeed;
     }
 
     _moveLeft() {
