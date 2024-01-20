@@ -3,8 +3,7 @@ import {
     Color
 } from "three";
 import {
-    RIGHT_EXTENT_IDX,
-    LEFT_EXTENT_IDX
+    RIGHT_EXTENT_IDX
 } from "./arkacutil"
 
 export default class Player extends ArkaObject {
@@ -15,15 +14,9 @@ export default class Player extends ArkaObject {
     }
 
     start(state) {
-        console.log("Player initialized."); // TODO: Remove.
         // Player's starting position
         this.mesh.position.x = 0;
         this.mesh.position.y = -3.5;
-
-        // Set up the player's dimensions.
-        // this.box.scale.x = this.width;
-        // this.box.scale.y = this.height;
-        // this.box.scale.z = this.depth;
 
         // Set up material for player.
         this.material.color = new Color(this.matColor);
@@ -35,18 +28,17 @@ export default class Player extends ArkaObject {
     update(state) {
         // Clamp the player's position according to the horizontal extents
         // of the screen. Extents must be adjusted based on the player mesh width.
-        const playerHalfWidth = this.mesh.scale.x;
-        const playerRightmost = state.screenExtents[RIGHT_EXTENT_IDX] - playerHalfWidth;
+        const padding = 0.1; // So the player doesn't directly hit the screen extent.
+        const playerHalfWidth = this.mesh.geometry.parameters.width * 0.5;
+        const playerRightmost = state.screenExtents[RIGHT_EXTENT_IDX] - (playerHalfWidth + padding);
         const playerLeftmost = -playerRightmost;
 
-        if ((this.mesh.position.x + playerHalfWidth) > playerRightmost) {
-            console.log(`Player is past right: ${playerRightmost}`); // TODO: Remove.
-            this.mesh.position.x = playerRightmost - playerHalfWidth;
+        if (this.mesh.position.x > playerRightmost) {
+            this.mesh.position.x = playerRightmost;
         }
 
-        if ((this.mesh.position.x - playerHalfWidth) < playerLeftmost) {
-            console.log(`Player is past left: ${playerLeftmost}`); // TODO: Remove.
-            this.mesh.position.x = playerLeftmost + playerHalfWidth;
+        if (this.mesh.position.x < playerLeftmost) {
+            this.mesh.position.x = playerLeftmost;
         }
     }
 

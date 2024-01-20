@@ -9,6 +9,7 @@
 
 import * as THREE from "three";
 import Player from "./player";
+import Ball from "./ball";
 
 
 // Initial threejs setup.
@@ -31,7 +32,8 @@ document.body.appendChild(renderEngine.domElement);
 // material.color = new THREE.Color(0xff0000);
 // cube.scale.y += 1;
 
-const player = new Player(2, 0.05, 0.05, 0x00ff00, 0.29);
+const player = new Player(2, 0.05, 0.2, 0x00ff00, 0.29);
+const ball = new Ball(0.25, 0.25, 0.1, 0xb30528, 0.01);
 
 const light = new THREE.AmbientLight(0xffffff, 2);
 
@@ -49,6 +51,7 @@ scene.background = skybox;
 
 // Add object to scene.
 scene.add(player.mesh);
+scene.add(ball.mesh);
 scene.add(light);
 
 camera.position.z = 5;
@@ -56,19 +59,19 @@ camera.position.z = 5;
 // Calculate extents of the screen on both
 // the x and y axis. These values are useful
 // for several objects, such as player position clamping.
-// Found based on camera's FOV (Field-of-view).
+// Found based on camera's FOV (Field-of-view, assumes perspective camera).
 // @returns values in CSS order (top, right, bottom, left)
 function calculateScreenExtents() {
-    const near = camera.near;
-    const far = camera.far;
+    const halfFOV = camera.fov * 0.5 * (Math.PI / 180);
 
-    const fov = camera.fov * (Math.PI / 180); // Convert FOV to radians.
-    const height = 2 * Math.tan(fov / 2) * near;
+    // Viewport dimensions
+    const height = 2 * Math.tan(halfFOV) * camera.position.z;
     const width = height * camera.aspect;
 
-    const right = width / 2;
+    // Positions of extents
+    const right = width * 0.5;
     const left = -right;
-    const top = height / 2;
+    const top = height * 0.5;
     const bottom = -top;
 
     return [top, right, bottom, left];
@@ -97,6 +100,7 @@ state.arkaObjBuffer[0] = player;
 // buffers and game objects within our scene.
 function gameInitialize() {
     state.arkaObjBuffer[0] = player;
+    state.arkaObjBuffer[1] = ball;
     state.score = 0;
     
     for (const o of state.arkaObjBuffer) {
