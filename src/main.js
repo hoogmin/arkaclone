@@ -10,6 +10,12 @@
 import * as THREE from "three";
 import Player from "./player";
 import Ball from "./ball";
+import Brick from "./brick";
+import {
+    PLAYER_IDX,
+    BALL_IDX,
+    ARKAOBJ_BUFFER_MAXSIZE
+} from "./arkacutil";
 
 
 // Initial threejs setup.
@@ -82,7 +88,7 @@ function calculateScreenExtents() {
 // player and ball. index 0 is always the player, 1 is the ball, rest are just bricks.
 // const arkaObjBuffer = new Array(26);
 const screenExtents = calculateScreenExtents();
-const arkaObjBuffer = new Array(26);
+const arkaObjBuffer = new Array(ARKAOBJ_BUFFER_MAXSIZE);
 arkaObjBuffer.fill(null);
 
 const state = {
@@ -94,13 +100,12 @@ const state = {
     screenExtents
 };
 
-state.arkaObjBuffer[0] = player;
-
 // Set up and prepare for the game loop. This can be initializing
 // buffers and game objects within our scene.
 function gameInitialize() {
-    state.arkaObjBuffer[0] = player;
-    state.arkaObjBuffer[1] = ball;
+    state.arkaObjBuffer[PLAYER_IDX] = player;
+    state.arkaObjBuffer[BALL_IDX] = ball;
+    state.arkaObjBuffer[2] = new Brick(1.5, 0.5, 0.2, 0xf5f507, 3);
     state.score = 0;
     
     for (const o of state.arkaObjBuffer) {

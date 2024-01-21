@@ -21,8 +21,8 @@ export default class Ball extends ArkaObject {
     }
 
     start(state) {
-        this.mesh.position.x = 0;
-        this.mesh.position.y = 0;
+        this.mesh.position.x = 1.9;
+        this.mesh.position.y = -2.7;
 
         this.material.color = new Color(this.matColor);
     }
@@ -52,5 +52,31 @@ export default class Ball extends ArkaObject {
         state.scene.remove(this.mesh);
         this.material.dispose();
         this.box.dispose();
+    }
+
+    setDx(newDirection) {
+        if (newDirection === 1 || newDirection === -1) {
+            this.dx = newDirection;
+            return;
+        }
+        
+        throw new Error(`[Ball]: property 'dx' must be either 1 or -1. Got ${newDirection}`);
+    }
+
+    setDy(newDirection) {
+        if (newDirection === 1 || newDirection === -1) {
+            this.dy = newDirection;
+            return;
+        }
+        
+        throw new Error(`[Ball]: property 'dy' must be either 1 or -1. Got ${newDirection}`);
+    }
+
+    flipDx() {
+        this.dx = -this.dx;
+    }
+
+    flipDy() {
+        this.dy = -this.dy;
     }
 }

@@ -1,9 +1,11 @@
 import ArkaObject from "./arkaobject";
 import {
-    Color
+    Color,
+    Box3
 } from "three";
 import {
-    RIGHT_EXTENT_IDX
+    RIGHT_EXTENT_IDX,
+    BALL_IDX
 } from "./arkacutil"
 
 export default class Player extends ArkaObject {
@@ -40,6 +42,10 @@ export default class Player extends ArkaObject {
         if (this.mesh.position.x < playerLeftmost) {
             this.mesh.position.x = playerLeftmost;
         }
+
+        if (this._isBallHit(state.arkaObjBuffer[BALL_IDX])) {
+            state.arkaObjBuffer[BALL_IDX].setDy(1);
+        }
     }
 
     destroy(state) {
@@ -47,6 +53,21 @@ export default class Player extends ArkaObject {
         state.scene.remove(this.mesh);
         this.material.dispose();
         this.box.dispose();
+    }
+
+    _isBallHit(ballObj) {
+        // Get Bounding boxes for both player and ball.
+        const playerBox = new Box3().setFromObject(this.mesh);
+        const ballBox = new Box3().setFromObject(ballObj.mesh);
+
+        // Check for intersection
+        const isIntersecting = playerBox.intersectsBox(ballBox);
+
+        if (isIntersecting) {
+            return true;
+        }
+
+        return false;
     }
 
     _moveRight() {
