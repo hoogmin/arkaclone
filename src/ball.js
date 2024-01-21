@@ -21,7 +21,7 @@ export default class Ball extends ArkaObject {
     }
 
     start(state) {
-        this.mesh.position.x = 1.9;
+        this.mesh.position.x = 0;
         this.mesh.position.y = -2.7;
 
         this.material.color = new Color(this.matColor);

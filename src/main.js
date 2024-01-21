@@ -14,7 +14,11 @@ import Brick from "./brick";
 import {
     PLAYER_IDX,
     BALL_IDX,
-    ARKAOBJ_BUFFER_MAXSIZE
+    ARKAOBJ_BUFFER_MAXSIZE,
+    CAMERA_MOVEMENT_SPEED,
+    CAMERA_INITIAL_POSITION_X,
+    CAMERA_INITIAL_POSITION_Y,
+    CAMERA_INITIAL_POSITION_Z
 } from "./arkacutil";
 
 
@@ -60,7 +64,7 @@ scene.add(player.mesh);
 scene.add(ball.mesh);
 scene.add(light);
 
-camera.position.z = 5;
+camera.position.z = CAMERA_INITIAL_POSITION_Z;
 
 // Calculate extents of the screen on both
 // the x and y axis. These values are useful
@@ -117,6 +121,35 @@ function gameInitialize() {
 
         o.start(state);
     }
+
+    // Initialize camera controls
+    document.addEventListener("keydown", (e) => {
+        // Zoom out
+        if (e.key === 'z') {
+            if (state.camera.position.z >= 0) {
+                state.camera.rotation.y = 0;
+            }
+
+            state.camera.position.z += CAMERA_MOVEMENT_SPEED;
+        }
+
+        // Zoom in
+        if (e.key === 'Z') {
+            if (state.camera.position.z <= 0) {
+                state.camera.rotation.y = Math.PI;
+            }
+
+            state.camera.position.z -= CAMERA_MOVEMENT_SPEED;
+        }
+
+        // Reset camera
+        if (e.key === 'r' || e.key === 'R') {
+            state.camera.position.x = CAMERA_INITIAL_POSITION_X;
+            state.camera.position.y = CAMERA_INITIAL_POSITION_Y;
+            state.camera.position.z = CAMERA_INITIAL_POSITION_Z;
+            state.camera.rotation.y = 0;
+        }
+    });
 }
 
 gameInitialize();
@@ -129,7 +162,7 @@ function gameLoop() {
     for (const o of state.arkaObjBuffer) {
         if (o === null || o === undefined) {
             // A null object slot does not have an object to be
-            // initialized.
+            // updated.
             continue;
         }
         

@@ -20,3 +20,9 @@ export const BALL_IDX = 1;
 export const AXIS_X = 0;
 export const AXIS_Y = 1;
 export const NO_AXIS = null;
+
+// Constants for camera
+export const CAMERA_MOVEMENT_SPEED = 0.4;
+export const CAMERA_INITIAL_POSITION_X = 0;
+export const CAMERA_INITIAL_POSITION_Y = 0;
+export const CAMERA_INITIAL_POSITION_Z = 5;
