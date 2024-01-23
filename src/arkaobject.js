@@ -15,6 +15,7 @@ export default class ArkaObject {
         this.matColor = color;
         this.material = new MeshStandardMaterial({ color: color });
         this.mesh = new Mesh(this.box, this.material);
+        this.markedForFree = false; // The game will use this for freeing objects from the arkaObjBuffer, thereby freeing them from memory.
     }
 
     start(state) {

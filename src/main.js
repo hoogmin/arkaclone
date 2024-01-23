@@ -18,7 +18,12 @@ import {
     CAMERA_MOVEMENT_SPEED,
     CAMERA_INITIAL_POSITION_X,
     CAMERA_INITIAL_POSITION_Y,
-    CAMERA_INITIAL_POSITION_Z
+    CAMERA_INITIAL_POSITION_Z,
+    BRICK_WIDTH,
+    BRICK_HEIGHT,
+    BRICK_DEPTH,
+    arkaUtilRange,
+    randomHexColor
 } from "./arkacutil";
 
 
@@ -90,7 +95,6 @@ function calculateScreenExtents() {
 // A buffer to store and track all ArkaObjects in our scene.
 // Can only be a max of 26 ArkaObjects since there are 24 bricks +
 // player and ball. index 0 is always the player, 1 is the ball, rest are just bricks.
-// const arkaObjBuffer = new Array(26);
 const screenExtents = calculateScreenExtents();
 const arkaObjBuffer = new Array(ARKAOBJ_BUFFER_MAXSIZE);
 arkaObjBuffer.fill(null);
@@ -107,10 +111,52 @@ const state = {
 // Set up and prepare for the game loop. This can be initializing
 // buffers and game objects within our scene.
 function gameInitialize() {
+    state.score = 0;
     state.arkaObjBuffer[PLAYER_IDX] = player;
     state.arkaObjBuffer[BALL_IDX] = ball;
-    state.arkaObjBuffer[2] = new Brick(1.5, 0.5, 0.2, 0xf5f507, 3);
-    state.score = 0;
+    // state.arkaObjBuffer[2] = new Brick(1.5, 0.5, 0.2, 0xf5f507, -6, 2.5); // Initial offset for grid
+    // state.arkaObjBuffer[3] = new Brick(1.5, 0.5, 0.2, 0x00ff00, -6 + 1.9, 2.5); // X offset
+    // state.arkaObjBuffer[4] = new Brick(1.5, 0.5, 0.2, 0x0000ff, -6, 2.5 - 0.75); // Y offset
+    
+    // Create grid of bricks. 6 x 4
+    const initialX = -4.7;
+    const initialY = 2.5;
+    const offsetX = 1.9;
+    const offsetY = -0.75;
+    state.arkaObjBuffer[2] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX, initialY);
+    state.arkaObjBuffer[3] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + offsetX, initialY);
+    state.arkaObjBuffer[4] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 2), initialY);
+    state.arkaObjBuffer[5] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 3), initialY);
+    state.arkaObjBuffer[6] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 4), initialY);
+    state.arkaObjBuffer[7] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 5), initialY);
+
+    state.arkaObjBuffer[8] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX, initialY + offsetY);
+    state.arkaObjBuffer[9] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + offsetX, initialY + offsetY);
+    state.arkaObjBuffer[10] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 2), initialY + offsetY);
+    state.arkaObjBuffer[11] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 3), initialY + offsetY);
+    state.arkaObjBuffer[12] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 4), initialY + offsetY);
+    state.arkaObjBuffer[13] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 5), initialY + offsetY);
+
+    state.arkaObjBuffer[14] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX, initialY + (offsetY * 2));
+    state.arkaObjBuffer[15] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + offsetX, initialY + (offsetY * 2));
+    state.arkaObjBuffer[16] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 2), initialY + (offsetY * 2));
+    state.arkaObjBuffer[17] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 3), initialY + (offsetY * 2));
+    state.arkaObjBuffer[18] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 4), initialY + (offsetY * 2));
+    state.arkaObjBuffer[19] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 5), initialY + (offsetY * 2));
+
+    state.arkaObjBuffer[20] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX, initialY + (offsetY * 3));
+    state.arkaObjBuffer[21] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + offsetX, initialY + (offsetY * 3));
+    state.arkaObjBuffer[22] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 2), initialY + (offsetY * 3));
+    state.arkaObjBuffer[23] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 3), initialY + (offsetY * 3));
+    state.arkaObjBuffer[24] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 4), initialY + (offsetY * 3));
+    state.arkaObjBuffer[25] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 5), initialY + (offsetY * 3));
+
+    // for (const brickNum of arkaUtilRange(2, ARKAOBJ_BUFFER_MAXSIZE)) {
+
+    //     for (const brickRow of arkaUtilRange(1, 5)) {
+    //         state.arkaObjBuffer[brickNum] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), currentX, currentY);
+    //     }
+    // }
     
     for (const o of state.arkaObjBuffer) {
         if (o === null || o === undefined) {
@@ -159,10 +205,17 @@ gameInitialize();
 function gameLoop() {
     requestAnimationFrame(gameLoop);
 
-    for (const o of state.arkaObjBuffer) {
+    for (const [i, o] of state.arkaObjBuffer.entries()) {
         if (o === null || o === undefined) {
-            // A null object slot does not have an object to be
-            // updated.
+            // Skip null slots.
+            continue;
+        }
+
+        if (o.markedForFree) {
+            // Object's resources were disposed but object itself must be freed from the game's arkaObjBuffer.
+            // This iteration is skipped as the slot would be null after this operation.
+            state.arkaObjBuffer[i] = null;
+            console.log(`Freed object at slot: ${i}`); // TODO: Remove this
             continue;
         }
         

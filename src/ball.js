@@ -52,6 +52,7 @@ export default class Ball extends ArkaObject {
         state.scene.remove(this.mesh);
         this.material.dispose();
         this.box.dispose();
+        this.markedForFree = true;
     }
 
     setDx(newDirection) {

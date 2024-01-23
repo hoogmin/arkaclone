@@ -53,6 +53,7 @@ export default class Player extends ArkaObject {
         state.scene.remove(this.mesh);
         this.material.dispose();
         this.box.dispose();
+        this.markedForFree = true;
     }
 
     _isBallHit(ballObj) {

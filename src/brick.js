@@ -11,25 +11,26 @@ import {
 } from "./arkacutil";
 
 export default class Brick extends ArkaObject {
-    constructor(width, height, depth, color, hitPoints) {
+    constructor(width, height, depth, color, positionX, positionY) {
         super(width, height, depth, color);
 
-        this.hitPoints = hitPoints;
+        this.positionX = positionX;
+        this.positionY = positionY;
     }
 
     start(state) {
         state.scene.add(this.mesh);
 
-        this.mesh.position.x = 0;
-        this.mesh.position.y = 0;
+        this.mesh.position.x = this.positionX;
+        this.mesh.position.y = this.positionY;
 
         this.material.color = new Color(this.matColor);
     }
 
     update(state) {
-        this._handleBallHit(state.arkaObjBuffer[BALL_IDX]);
+        const [intersecting, hitAxis] = this._handleBallHit(state.arkaObjBuffer[BALL_IDX]);
 
-        if (this.hitPoints <= 0) {
+        if (intersecting) {
             this.destroy(state);
         }
     }
@@ -39,6 +40,7 @@ export default class Brick extends ArkaObject {
         state.scene.remove(this.mesh);
         this.material.dispose();
         this.box.dispose();
+        this.markedForFree = true;
     }
 
     _handleBallHit(ballObj) {
@@ -56,24 +58,24 @@ export default class Brick extends ArkaObject {
 
             if (deltaX < deltaY) {
                 // Contact on the side (X-axis).
-                //return [true, AXIS_X];
                 ballObj.flipDx();
-
+                
                 // Adjust ball position to avoid overlap.
                 const overlapX = deltaX;
                 ballObj.mesh.position.x -= 0.03 * overlapX;
+                
+                return [true, AXIS_X];
             } else if (deltaY < deltaX) {
                 // Contact from the top/bottom (Y-axis).
-                //return [true, AXIS_Y];
                 ballObj.flipDy();
-
+                
                 const overlapY = deltaY;
                 ballObj.mesh.position.y -= 0.03 * overlapY;
+                
+                return [true, AXIS_Y];
             }
-
-            this.hitPoints -= 1;
         }
 
-        //return [false, NO_AXIS];
+        return [false, NO_AXIS];
     }
 }

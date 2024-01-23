@@ -26,3 +26,24 @@ export const CAMERA_MOVEMENT_SPEED = 0.4;
 export const CAMERA_INITIAL_POSITION_X = 0;
 export const CAMERA_INITIAL_POSITION_Y = 0;
 export const CAMERA_INITIAL_POSITION_Z = 5;
+
+// Constants for bricks
+export const BRICK_WIDTH = 1.5;
+export const BRICK_HEIGHT = 0.5;
+export const BRICK_DEPTH = 0.2;
+
+// General utilies that are useful
+
+// Generator that creates an iterable of the range [start, end) (end exclusive) incremented by step.
+export function* arkaUtilRange(start, end, step = 1) {
+    for (let i = start; i < end; i += step) {
+        yield i;
+    }
+}
+
+// Get a random hex color! Returned as decimal but will interpreted as hex.
+export const randomHexColor = () => {
+    const randomDecimal = Math.floor(Math.random() * 16777216);
+
+    return randomDecimal;
+};
