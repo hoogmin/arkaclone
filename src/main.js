@@ -34,20 +34,13 @@ const scene = new THREE.Scene();
 const aspectRatio = window.innerWidth / window.innerHeight;
 const camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 1000);
 const renderEngine = new THREE.WebGLRenderer({
-    antialias: true
+    antialias: false
 });
 
 renderEngine.setSize(window.innerWidth, window.innerHeight);
 renderEngine.setClearColor(0x0);
 
 document.body.appendChild(renderEngine.domElement);
-
-// Draw cube
-// const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-// const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-// const cube = new THREE.Mesh(geometry, material);
-// material.color = new THREE.Color(0xff0000);
-// cube.scale.y += 1;
 
 const player = new Player(2, 0.05, 0.2, 0x00ff00, 0.29);
 const ball = new Ball(0.25, 0.25, 0.1, 0xb30528, 0.01);
@@ -134,14 +127,8 @@ const state = {
     screenExtents
 };
 
-// Set up and prepare for the game loop. This can be initializing
-// buffers and game objects within our scene.
-function gameInitialize() {
-    state.score = 0;
-    state.arkaObjBuffer[PLAYER_IDX] = player;
-    state.arkaObjBuffer[BALL_IDX] = ball;
-    
-    // Create grid of bricks. 6 x 4
+// Generate bricks statically.
+const generateBricks = () => {
     const initialX = -4.7;
     const initialY = 2.5;
     const offsetX = 1.9;
@@ -173,6 +160,33 @@ function gameInitialize() {
     state.arkaObjBuffer[23] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 3), initialY + (offsetY * 3));
     state.arkaObjBuffer[24] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 4), initialY + (offsetY * 3));
     state.arkaObjBuffer[25] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 5), initialY + (offsetY * 3));
+
+    for (const i of arkaUtilRange(2, ARKAOBJ_BUFFER_MAXSIZE)) {
+        state.arkaObjBuffer[i].start(state);
+    }
+};
+
+// Check if arkaObjBuffer contains any bricks still.
+// return true if yes, false otherwise.
+const brickPresent = () => {
+    for (const i of arkaUtilRange(2, ARKAOBJ_BUFFER_MAXSIZE)) {
+        if (state.arkaObjBuffer[i] !== null) {
+            return true;
+        }
+    }
+
+    return false;
+};
+
+// Set up and prepare for the game loop. This can be initializing
+// buffers and game objects within our scene.
+function gameInitialize() {
+    state.score = 0;
+    state.arkaObjBuffer[PLAYER_IDX] = player;
+    state.arkaObjBuffer[BALL_IDX] = ball;
+    
+    // Create grid of bricks. 6 x 4
+    generateBricks();
     
     for (const o of state.arkaObjBuffer) {
         if (o === null || o === undefined) {
@@ -239,7 +253,11 @@ function gameLoop() {
             // Object's resources were disposed but object itself must be freed from the game's arkaObjBuffer.
             // This iteration is skipped as the slot would be null after this operation.
             state.arkaObjBuffer[i] = null;
-            console.log(`Freed object at slot: ${i}`); // TODO: Remove this
+
+            if (!brickPresent()) {
+                generateBricks();
+            }
+
             continue;
         }
         

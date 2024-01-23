@@ -91,10 +91,5 @@ export default class Player extends ArkaObject {
                 this._moveRight();
             }
         });
-
-        // document.addEventListener("keyup", (e) => {
-        //     // TODO: reset player speed or something.
-        //     console.log(`Key released: ${e.key}`);
-        // });
     }
 }
