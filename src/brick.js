@@ -36,7 +36,8 @@ export default class Brick extends ArkaObject {
     }
 
     destroy(state) {
-        state.score += 1; // TODO: Will call an update method.
+        state.incrementScore();
+        state.updateUI();
         state.scene.remove(this.mesh);
         this.material.dispose();
         this.box.dispose();

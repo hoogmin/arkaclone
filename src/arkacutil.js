@@ -26,11 +26,15 @@ export const CAMERA_MOVEMENT_SPEED = 0.4;
 export const CAMERA_INITIAL_POSITION_X = 0;
 export const CAMERA_INITIAL_POSITION_Y = 0;
 export const CAMERA_INITIAL_POSITION_Z = 5;
+export const CAMERA_MAX_POSITION_Z = 100;
 
 // Constants for bricks
 export const BRICK_WIDTH = 1.5;
 export const BRICK_HEIGHT = 0.5;
 export const BRICK_DEPTH = 0.2;
+
+// Constants related to score keeping
+export const MAX_SCORE = 999;
 
 // General utilies that are useful
 

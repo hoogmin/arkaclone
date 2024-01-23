@@ -42,6 +42,8 @@ export default class Ball extends ArkaObject {
 
         if (this.mesh.position.y < state.screenExtents[BOTTOM_EXTENT_IDX]) {
             this.dy = 1;
+            state.resetScore();
+            state.updateUI();
         }
 
         this.mesh.position.x += this.movementSpeed * this.dx;

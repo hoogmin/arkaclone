@@ -23,7 +23,9 @@ import {
     BRICK_HEIGHT,
     BRICK_DEPTH,
     arkaUtilRange,
-    randomHexColor
+    randomHexColor,
+    CAMERA_MAX_POSITION_Z,
+    MAX_SCORE
 } from "./arkacutil";
 
 
@@ -97,14 +99,38 @@ function calculateScreenExtents() {
 // player and ball. index 0 is always the player, 1 is the ball, rest are just bricks.
 const screenExtents = calculateScreenExtents();
 const arkaObjBuffer = new Array(ARKAOBJ_BUFFER_MAXSIZE);
+let score = 0;
 arkaObjBuffer.fill(null);
+
+const incrementScore = () => {
+    if (score >= MAX_SCORE) {
+        return;
+    }
+
+    score += 1;
+};
+
+const resetScore = () => {
+    score = 0;
+};
+
+const updateUI = () => {
+    const newUI = `&lt;&larr;&rarr;&#65;&#68;&gt; Move | Score: ${score} | &lt;Z/Shift-Z&gt; Zoom in+out &lt;R&gt; Reset Camera`;
+
+    const uiNode = document.querySelector("#statuspluscontrols");
+
+    uiNode.innerHTML = newUI;
+};
 
 const state = {
     scene,
     aspectRatio,
     camera,
     arkaObjBuffer,
-    score: 0,
+    score,
+    incrementScore,
+    resetScore,
+    updateUI,
     screenExtents
 };
 
@@ -114,9 +140,6 @@ function gameInitialize() {
     state.score = 0;
     state.arkaObjBuffer[PLAYER_IDX] = player;
     state.arkaObjBuffer[BALL_IDX] = ball;
-    // state.arkaObjBuffer[2] = new Brick(1.5, 0.5, 0.2, 0xf5f507, -6, 2.5); // Initial offset for grid
-    // state.arkaObjBuffer[3] = new Brick(1.5, 0.5, 0.2, 0x00ff00, -6 + 1.9, 2.5); // X offset
-    // state.arkaObjBuffer[4] = new Brick(1.5, 0.5, 0.2, 0x0000ff, -6, 2.5 - 0.75); // Y offset
     
     // Create grid of bricks. 6 x 4
     const initialX = -4.7;
@@ -150,13 +173,6 @@ function gameInitialize() {
     state.arkaObjBuffer[23] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 3), initialY + (offsetY * 3));
     state.arkaObjBuffer[24] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 4), initialY + (offsetY * 3));
     state.arkaObjBuffer[25] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), initialX + (offsetX * 5), initialY + (offsetY * 3));
-
-    // for (const brickNum of arkaUtilRange(2, ARKAOBJ_BUFFER_MAXSIZE)) {
-
-    //     for (const brickRow of arkaUtilRange(1, 5)) {
-    //         state.arkaObjBuffer[brickNum] = new Brick(BRICK_WIDTH, BRICK_HEIGHT, BRICK_DEPTH, randomHexColor(), currentX, currentY);
-    //     }
-    // }
     
     for (const o of state.arkaObjBuffer) {
         if (o === null || o === undefined) {
@@ -177,6 +193,10 @@ function gameInitialize() {
             }
 
             state.camera.position.z += CAMERA_MOVEMENT_SPEED;
+
+            if (state.camera.position.z >= CAMERA_MAX_POSITION_Z) {
+                state.camera.position.z = CAMERA_MAX_POSITION_Z;
+            }
         }
 
         // Zoom in
@@ -186,6 +206,10 @@ function gameInitialize() {
             }
 
             state.camera.position.z -= CAMERA_MOVEMENT_SPEED;
+
+            if (state.camera.position.z <= -CAMERA_MAX_POSITION_Z) {
+                state.camera.position.z = -CAMERA_MAX_POSITION_Z;
+            }
         }
 
         // Reset camera
