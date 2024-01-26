@@ -4,7 +4,9 @@
   "description": "A clone of Arkanoid/Breakout in 3D.",
   "main": "src/main.js",
   "scripts": {
-    "dev": "npx vite"
+    "dev": "vite",
+    "preview": "vite preview --port 8080",
+    "build": "vite build"
   },
   "author": "Javier Martinez",
   "license": "MIT",
