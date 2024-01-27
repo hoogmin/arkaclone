@@ -3,7 +3,11 @@ import {
     RIGHT_EXTENT_IDX,
     LEFT_EXTENT_IDX,
     TOP_EXTENT_IDX,
-    BOTTOM_EXTENT_IDX
+    BOTTOM_EXTENT_IDX,
+    BALL_MAX_EXTENT_OFFSET_X,
+    BALL_MAX_EXTENT_OFFSET_Y,
+    BALL_INITIAL_X,
+    BALL_INITIAL_Y
 } from "./arkacutil";
 import {
     Color
@@ -21,8 +25,8 @@ export default class Ball extends ArkaObject {
     }
 
     start(state) {
-        this.mesh.position.x = 0;
-        this.mesh.position.y = -2.7;
+        this.mesh.position.x = BALL_INITIAL_X;
+        this.mesh.position.y = BALL_INITIAL_Y;
 
         this.material.color = new Color(this.matColor);
     }
@@ -46,8 +50,20 @@ export default class Ball extends ArkaObject {
             state.updateUI();
         }
 
-        this.mesh.position.x += this.movementSpeed * this.dx;
-        this.mesh.position.y += this.movementSpeed * this.dy;
+        this.mesh.position.x += this.movementSpeed * this.dx * state.deltaTime;
+        this.mesh.position.y += this.movementSpeed * this.dy * state.deltaTime;
+
+        // If the ball goes too far out of bounds for whatever buggy reason,
+        // reset its position directly.
+        if (this.mesh.position.x > (state.screenExtents[RIGHT_EXTENT_IDX] + BALL_MAX_EXTENT_OFFSET_X) || 
+            this.mesh.position.x < (state.screenExtents[LEFT_EXTENT_IDX] - BALL_MAX_EXTENT_OFFSET_X)) {
+            this.mesh.position.x = BALL_INITIAL_X;
+        }
+
+        if (this.mesh.position.y > (state.screenExtents[TOP_EXTENT_IDX] + BALL_MAX_EXTENT_OFFSET_Y) || 
+            this.mesh.position.y < (state.screenExtents[BOTTOM_EXTENT_IDX] - BALL_MAX_EXTENT_OFFSET_Y)) {
+            this.mesh.position.y = BALL_INITIAL_Y;
+        }
     }
 
     destroy(state) {

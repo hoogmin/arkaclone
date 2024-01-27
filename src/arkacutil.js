@@ -33,6 +33,12 @@ export const BRICK_WIDTH = 1.5;
 export const BRICK_HEIGHT = 0.5;
 export const BRICK_DEPTH = 0.2;
 
+// Constants for ball
+export const BALL_INITIAL_X = 0;
+export const BALL_INITIAL_Y = -2.7;
+export const BALL_MAX_EXTENT_OFFSET_X = 10;
+export const BALL_MAX_EXTENT_OFFSET_Y = 10;
+
 // Constants related to score keeping
 export const MAX_SCORE = 999;
 

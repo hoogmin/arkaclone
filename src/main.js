@@ -31,10 +31,10 @@ import {
 
 // Initial threejs setup.
 const scene = new THREE.Scene();
-const aspectRatio = window.innerWidth / window.innerHeight;
+let aspectRatio = window.innerWidth / window.innerHeight;
 const camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 1000);
 const renderEngine = new THREE.WebGLRenderer({
-    antialias: false
+    antialias: true
 });
 
 renderEngine.setSize(window.innerWidth, window.innerHeight);
@@ -43,7 +43,7 @@ renderEngine.setClearColor(0x0);
 document.body.appendChild(renderEngine.domElement);
 
 const player = new Player(2, 0.05, 0.2, 0x00ff00, 0.29);
-const ball = new Ball(0.25, 0.25, 0.1, 0xb30528, 0.01);
+const ball = new Ball(0.25, 0.25, 0.1, 0xb30528, 3);
 
 const light = new THREE.AmbientLight(0xffffff, 2);
 
@@ -93,6 +93,8 @@ function calculateScreenExtents() {
 const screenExtents = calculateScreenExtents();
 const arkaObjBuffer = new Array(ARKAOBJ_BUFFER_MAXSIZE);
 let score = 0;
+let lastTimestamp = 0;
+let deltaTime = 0;
 arkaObjBuffer.fill(null);
 
 const incrementScore = () => {
@@ -124,7 +126,8 @@ const state = {
     incrementScore,
     resetScore,
     updateUI,
-    screenExtents
+    screenExtents,
+    deltaTime
 };
 
 // Generate bricks statically.
@@ -234,14 +237,23 @@ function gameInitialize() {
             state.camera.rotation.y = 0;
         }
     });
+
+    // Handle window resize events
+    window.addEventListener("resize", () => {
+        aspectRatio = window.innerWidth / window.innerHeight
+        state.camera.aspect = aspectRatio;
+        state.camera.updateProjectionMatrix();
+        renderEngine.setSize(window.innerWidth, window.innerHeight);
+        state.screenExtents = calculateScreenExtents();
+    });
 }
 
 gameInitialize();
 
 // The primary entry point of the app where
 // pretty much everything must go through.
-function gameLoop() {
-    requestAnimationFrame(gameLoop);
+function gameLoop(timestamp) {
+    state.deltaTime = (timestamp - lastTimestamp) / 1000; // Convert to seconds
 
     for (const [i, o] of state.arkaObjBuffer.entries()) {
         if (o === null || o === undefined) {
@@ -263,8 +275,12 @@ function gameLoop() {
         
         o.update(state);
     }
-
+    
     renderEngine.render(scene, camera);
+
+    lastTimestamp = timestamp;
+
+    requestAnimationFrame(gameLoop);
 }
 
-gameLoop();
+requestAnimationFrame(gameLoop);
