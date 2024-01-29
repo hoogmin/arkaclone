@@ -7,6 +7,8 @@ felt like creating a small engine of sorts. There is so much more
 I could have done here and may improve this in the future. For now,
 I will leave it at this.
 
+🎮Play: https://arkaclone.vercel.app/
+
 # Description and Screenshot
 Its a game like Arkanoid or Break The Bricks that is never ending.
 It just keeps generating more bricks after every wave.
